@@ -131,16 +131,20 @@ export const VisualSearchInterface: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
-      <header className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
+      <header className="glass sticky top-0 z-40 border-b border-border/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center glow animate-glow-pulse">
                 <Search className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Visual Product Matcher</h1>
-                <p className="text-sm text-muted-foreground">Find products by image similarity</p>
+                <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                  AI Visual Search
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  ✨ Find products by image similarity powered by AI
+                </p>
               </div>
             </div>
             
@@ -148,7 +152,7 @@ export const VisualSearchInterface: React.FC = () => {
               <Button 
                 onClick={() => handleSearch()}
                 disabled={isSearching}
-                className="bg-gradient-primary text-primary-foreground hover:shadow-glow"
+                className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover-lift"
               >
                 <Sparkles className="h-4 w-4 mr-2" />
                 {isSearching ? 'Searching...' : 'Search Again'}
@@ -174,16 +178,16 @@ export const VisualSearchInterface: React.FC = () => {
 
               {/* Results Header */}
               {hasSearched && (
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between animate-fade-in">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-bold">
+                    <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                       {uploadedImage ? 'Similar Products' : 'Featured Products'}
                     </h2>
                     {uploadedImage && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <TrendingUp className="h-4 w-4" />
-                        <span className="text-sm">
-                          {filteredResults.length} matches found
+                      <div className="flex items-center gap-2 text-muted-foreground animate-slide-up">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        <span className="text-sm font-medium">
+                          {filteredResults.length} AI matches found
                         </span>
                       </div>
                     )}
@@ -192,7 +196,7 @@ export const VisualSearchInterface: React.FC = () => {
                   <Button
                     variant="outline"
                     onClick={() => setShowFilters(!showFilters)}
-                    className="lg:hidden"
+                    className="lg:hidden glass hover:bg-primary/10 transition-all duration-300"
                   >
                     Filters ({Object.values(filters).filter(v => v !== undefined && v !== '').length})
                   </Button>

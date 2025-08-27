@@ -95,12 +95,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   if (uploadedImage) {
     return (
-      <Card className="p-6">
-        <div className="relative">
+      <Card className="glass border-primary/20 hover:border-primary/40 transition-all duration-500 hover-lift animate-scale-in">
+        <div className="relative p-6">
           <Button
             variant="ghost"
             size="sm"
-            className="absolute -top-2 -right-2 z-10 h-8 w-8 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="absolute -top-2 -right-2 z-10 h-8 w-8 rounded-full bg-destructive/90 text-destructive-foreground hover:bg-destructive border-0 glow"
             onClick={onClearImage}
           >
             <X className="h-4 w-4" />
@@ -109,26 +109,31 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <img
               src={uploadedImage.preview}
               alt="Uploaded image"
-              className="w-full h-full object-cover rounded-lg shadow-soft"
+              className="w-full h-full object-cover rounded-xl shadow-glow transition-all duration-500 hover:scale-105"
             />
           </div>
-          <p className="text-sm text-muted-foreground mt-4 text-center">
+          <p className="text-sm text-muted-foreground mt-4 text-center font-medium">
             {uploadedImage.name}
           </p>
+          <div className="mt-2 text-center">
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+              ✨ Ready for AI analysis
+            </span>
+          </div>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
+    <Card className="glass border-primary/20 hover:border-primary/30 transition-all duration-500 animate-fade-in">
+      <div className="p-6 space-y-6">
         {/* Drag & Drop Area */}
         <div
-          className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${
+          className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-500 ${
             dragActive 
-              ? 'border-primary bg-primary/5 shadow-glow' 
-              : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-primary/5'
+              ? 'border-primary bg-primary/5 shadow-glow scale-105' 
+              : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-primary/5 hover:shadow-soft'
           }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
@@ -143,20 +148,20 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           />
           
           <div className="space-y-4">
-            <div className={`mx-auto w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center transition-transform duration-300 ${
-              dragActive ? 'scale-110' : 'hover:scale-105'
+            <div className={`mx-auto w-20 h-20 rounded-full bg-gradient-primary flex items-center justify-center transition-all duration-500 animate-float ${
+              dragActive ? 'scale-110 glow' : 'hover:scale-105 hover:glow'
             }`}>
-              <Upload className="h-8 w-8 text-primary-foreground" />
+              <Upload className="h-10 w-10 text-primary-foreground" />
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="text-xl font-bold text-foreground">
                 Drop your image here
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mt-2">
                 or click to browse files
               </p>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-muted-foreground mt-3 opacity-75">
                 Supports: JPG, PNG, GIF (max 10MB)
               </p>
             </div>
@@ -168,14 +173,14 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <span className="w-full border-t border-muted" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
+            <span className="bg-card px-3 py-1 text-muted-foreground rounded-full border border-border/50">
               Or use image URL
             </span>
           </div>
         </div>
 
         {/* URL Input */}
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <div className="relative flex-1">
             <Link className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -183,7 +188,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               placeholder="https://example.com/image.jpg"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              className="pl-10"
+              className="pl-10 glass border-border/50 focus:border-primary/50 transition-all duration-300"
               onKeyPress={(e) => e.key === 'Enter' && handleUrlSubmit()}
             />
           </div>
@@ -191,7 +196,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             onClick={handleUrlSubmit}
             disabled={!imageUrl.trim()}
             variant="outline"
-            className="px-4"
+            className="px-4 glass border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
           >
             <ImageIcon className="h-4 w-4" />
           </Button>

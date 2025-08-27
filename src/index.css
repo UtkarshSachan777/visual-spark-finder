@@ -2,124 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Visual Product Matcher Design System */
+/* Visual Product Matcher - Futuristic AI Design System */
 
 @layer base {
   :root {
-    --background: 249 12% 99%;
-    --foreground: 222 15% 20%;
-
+    /* Light theme (fallback) */
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
-    --card-foreground: 222 15% 20%;
-
+    --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 15% 20%;
-
-    --primary: 230 60% 60%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 230 80% 75%;
-
-    --secondary: 220 13% 95%;
-    --secondary-foreground: 222 15% 25%;
-
-    --accent: 280 65% 65%;
-    --accent-foreground: 0 0% 100%;
-    --accent-glow: 280 80% 80%;
-
-    --success: 120 60% 50%;
-    --success-foreground: 0 0% 100%;
-
-    --hero: 240 60% 25%;
-    --hero-foreground: 0 0% 100%;
-
-    --muted: 220 13% 92%;
-    --muted-foreground: 220 8% 45%;
-
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 220 13% 88%;
-    --input: 220 13% 96%;
-    --ring: 230 60% 60%;
-
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
     --radius: 0.75rem;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--hero)), hsl(var(--primary)));
-    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--secondary)));
-
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.15);
-    --shadow-glow: 0 8px 40px -8px hsl(var(--primary) / 0.25);
-    --shadow-accent: 0 8px 30px -6px hsl(var(--accent) / 0.3);
-
-    /* Animations */
+    /* Futuristic design tokens */
+    --primary-glow: 262.1 83.3% 70%;
+    --neon-cyan: 188 100% 60%;
+    --neon-purple: 262.1 83.3% 57.8%;
+    --neon-blue: 217 91% 60%;
+    --gradient-primary: linear-gradient(135deg, hsl(262.1 83.3% 57.8%), hsl(217 91% 60%));
+    --gradient-neon: linear-gradient(135deg, hsl(188 100% 60%), hsl(262.1 83.3% 57.8%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 14.3% 95.9%));
+    --glass-bg: hsla(0, 0%, 100%, 0.05);
+    --glass-border: hsla(0, 0%, 100%, 0.1);
+    --shadow-soft: 0 4px 16px -4px hsl(220 8.9% 46.1% / 0.15);
+    --shadow-glow: 0 0 40px hsl(262.1 83.3% 57.8% / 0.4);
+    --shadow-neon: 0 0 30px hsl(188 100% 60% / 0.5);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --backdrop-blur: blur(20px);
   }
 
-  .dark {
-    --background: 222 25% 8%;
-    --foreground: 220 15% 92%;
+  /* Dark theme as default for futuristic feel */
+  .dark,
+  body {
+    --background: 220 13% 9%;
+    --foreground: 220 9% 95%;
+    --card: 220 13% 11%;
+    --card-foreground: 220 9% 95%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 220 9% 95%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 220 9% 95%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 60%;
+    --accent: 220 13% 15%;
+    --accent-foreground: 220 9% 95%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 18%;
+    --input: 220 13% 15%;
+    --ring: 262.1 83.3% 57.8%;
 
-    --card: 222 20% 12%;
-    --card-foreground: 220 15% 92%;
+    /* Dark mode futuristic tokens */
+    --gradient-subtle: linear-gradient(180deg, hsl(220 13% 9%), hsl(220 13% 15%));
+    --glass-bg: hsla(220, 13%, 15%, 0.4);
+    --glass-border: hsla(220, 9%, 95%, 0.1);
+    --shadow-soft: 0 8px 32px -8px hsl(220 13% 9% / 0.6);
 
-    --popover: 222 20% 12%;
-    --popover-foreground: 220 15% 92%;
-
-    --primary: 230 70% 70%;
-    --primary-foreground: 222 25% 8%;
-    --primary-glow: 230 80% 80%;
-
-    --secondary: 222 15% 18%;
-    --secondary-foreground: 220 15% 85%;
-
-    --muted: 222 15% 15%;
-    --muted-foreground: 220 8% 60%;
-
-    --accent: 280 70% 70%;
-    --accent-foreground: 222 25% 8%;
-    --accent-glow: 280 80% 85%;
-
-    --success: 120 65% 55%;
-    --success-foreground: 222 25% 8%;
-
-    --hero: 240 70% 30%;
-    --hero-foreground: 220 15% 92%;
-
-    --destructive: 0 75% 60%;
-    --destructive-foreground: 220 15% 92%;
-
-    --border: 222 15% 20%;
-    --input: 222 15% 15%;
-    --ring: 230 70% 70%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 220 13% 11%;
+    --sidebar-foreground: 220 9% 95%;
+    --sidebar-primary: 262.1 83.3% 57.8%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 220 13% 15%;
+    --sidebar-accent-foreground: 220 9% 95%;
+    --sidebar-border: 220 13% 18%;
+    --sidebar-ring: 262.1 83.3% 57.8%;
   }
 }
 
@@ -129,37 +91,123 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow-x: hidden;
   }
 
-  /* Custom animations */
+  /* Custom utility classes */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .neon-glow {
+    box-shadow: var(--shadow-neon);
+  }
+
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-soft), var(--shadow-glow);
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 20px hsl(262.1 83.3% 57.8% / 0.2);
+    }
+    to {
+      box-shadow: 0 0 40px hsl(262.1 83.3% 57.8% / 0.6);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
 
-  .animate-pulse-slow {
-    animation: pulse 3s ease-in-out infinite;
-  }
-
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { 
+      transform: translateY(0px); 
+    }
+    50% { 
+      transform: translateY(-10px); 
+    }
   }
 
-  /* Gradient backgrounds */
+  /* Scrollbar styling for futuristic feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary-glow));
+  }
+
+  /* Gradient backgrounds using CSS variables */
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }
 
-  .bg-gradient-accent {
-    background: var(--gradient-accent);
-  }
-
-  .bg-gradient-hero {
-    background: var(--gradient-hero);
+  .bg-gradient-neon {
+    background: var(--gradient-neon);
   }
 
   .bg-gradient-subtle {
     background: var(--gradient-subtle);
+  }
+
+  /* Shimmer effect for loading states */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
 }

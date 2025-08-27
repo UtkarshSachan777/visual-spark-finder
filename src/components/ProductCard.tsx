@@ -1,132 +1,127 @@
 import React from 'react';
-import { Heart, ShoppingCart, Star } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { SearchResult } from '@/types/product';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { SimilarityBar } from './SimilarityBar';
+import { Heart, Eye } from 'lucide-react';
 
 interface ProductCardProps {
   result: SearchResult;
   showSimilarity?: boolean;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ 
-  result, 
-  showSimilarity = true 
-}) => {
-  const { product, similarity, confidence } = result;
-
-  const getSimilarityColor = (score: number) => {
-    if (score >= 0.8) return 'bg-gradient-primary text-primary-foreground';
-    if (score >= 0.6) return 'bg-gradient-accent text-accent-foreground';
-    return 'bg-secondary text-secondary-foreground';
-  };
-
-  const getSimilarityText = (score: number) => {
-    if (score >= 0.9) return 'Excellent Match';
-    if (score >= 0.7) return 'Good Match';
-    if (score >= 0.5) return 'Fair Match';
-    return 'Low Match';
-  };
+export const ProductCard: React.FC<ProductCardProps> = ({ result, showSimilarity = true }) => {
+  const { product, similarity } = result;
 
   return (
-    <Card className="group overflow-hidden hover:shadow-glow transition-all duration-300 hover:-translate-y-1">
+    <Card className="group overflow-hidden glass border-border/50 hover:border-primary/40 transition-all duration-500 hover-lift animate-scale-in">
       <div className="relative aspect-square overflow-hidden">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
         
         {showSimilarity && (
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-3 right-3">
             <Badge 
-              className={`${getSimilarityColor(similarity)} shadow-soft text-xs font-medium`}
+              variant="secondary" 
+              className="glass text-xs font-bold bg-primary/90 text-primary-foreground border-0 glow"
             >
-              {Math.round(similarity * 100)}% Match
+              {Math.round(similarity * 100)}% match
             </Badge>
           </div>
         )}
 
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {/* Floating action buttons */}
+        <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 rounded-full bg-white/90 text-foreground hover:bg-white hover:text-destructive"
+            className="h-9 w-9 rounded-full glass hover:bg-primary/20 border-0"
           >
             <Heart className="h-4 w-4" />
           </Button>
         </div>
 
+        {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
-        <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+        {/* Floating quick view button */}
+        <div className="absolute bottom-3 left-3 right-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
           <Button 
             size="sm" 
-            className="w-full bg-white/90 text-foreground hover:bg-white"
+            className="w-full glass bg-white/10 text-white hover:bg-white/20 border-white/20"
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
+            <Eye className="h-4 w-4 mr-2" />
             Quick View
           </Button>
         </div>
       </div>
 
-      <CardContent className="p-4">
-        <div className="space-y-2">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-sm leading-tight text-foreground group-hover:text-primary transition-colors duration-200">
-              {product.name}
-            </h3>
-            <span className="text-lg font-bold text-primary flex-shrink-0">
-              ${product.price}
-            </span>
-          </div>
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors duration-300">
+            {product.name}
+          </h3>
+          <p className="text-sm text-muted-foreground capitalize font-medium">
+            {product.category}
+          </p>
+        </div>
 
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">
-              {product.category}
-            </Badge>
-            <span className="text-xs text-muted-foreground">
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
+            ${product.price.toFixed(2)}
+          </span>
+          {product.brand && (
+            <Badge variant="outline" className="text-xs glass border-primary/30">
               {product.brand}
-            </span>
-          </div>
-
-          {showSimilarity && (
-            <div className="flex items-center justify-between pt-2 border-t border-border">
-              <div className="flex items-center gap-1">
-                <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                <span className="text-xs text-muted-foreground">
-                  {getSimilarityText(similarity)}
-                </span>
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Confidence: {Math.round(confidence * 100)}%
-              </div>
-            </div>
-          )}
-
-          {product.color && (
-            <div className="flex items-center gap-2 pt-1">
-              <span className="text-xs text-muted-foreground">Color:</span>
-              <div 
-                className="w-4 h-4 rounded-full border border-border"
-                style={{ 
-                  backgroundColor: product.color.toLowerCase() === 'white' ? '#ffffff' : 
-                                    product.color.toLowerCase() === 'black' ? '#000000' :
-                                    product.color.toLowerCase() === 'red' ? '#ef4444' :
-                                    product.color.toLowerCase() === 'blue' ? '#3b82f6' :
-                                    product.color.toLowerCase() === 'green' ? '#22c55e' :
-                                    product.color.toLowerCase() === 'gray' ? '#6b7280' :
-                                    product.color.toLowerCase() === 'brown' ? '#a3a3a3' :
-                                    '#6b7280'
-                }}
-              />
-              <span className="text-xs text-muted-foreground">{product.color}</span>
-            </div>
+            </Badge>
           )}
         </div>
-      </CardContent>
+
+        {showSimilarity && (
+          <SimilarityBar similarity={similarity} />
+        )}
+
+        {/* Color indicator */}
+        {product.color && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Color:</span>
+            <div 
+              className="w-4 h-4 rounded-full border-2 border-border glow"
+              style={{ 
+                backgroundColor: product.color.toLowerCase() === 'white' ? '#ffffff' : 
+                                  product.color.toLowerCase() === 'black' ? '#000000' :
+                                  product.color.toLowerCase() === 'red' ? '#ef4444' :
+                                  product.color.toLowerCase() === 'blue' ? '#3b82f6' :
+                                  product.color.toLowerCase() === 'green' ? '#22c55e' :
+                                  product.color.toLowerCase() === 'gray' ? '#6b7280' :
+                                  product.color.toLowerCase() === 'brown' ? '#a3a3a3' :
+                                  '#6b7280'
+              }}
+            />
+            <span className="text-xs text-muted-foreground font-medium">{product.color}</span>
+          </div>
+        )}
+
+        {/* Tags */}
+        {product.tags && product.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {product.tags.slice(0, 3).map((tag, index) => (
+              <Badge 
+                key={index} 
+                variant="secondary" 
+                className="text-xs opacity-70 hover:opacity-100 transition-opacity duration-200"
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+      </div>
     </Card>
   );
 };
