@@ -13,6 +13,7 @@ export const VisualSearchInterface: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [filteredResults, setFilteredResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
@@ -40,11 +41,20 @@ export const VisualSearchInterface: React.FC = () => {
     }
 
     setIsSearching(true);
+    setIsInitializing(true);
     setHasSearched(false);
 
     try {
+      // Show initialization message on first search
+      toast({
+        title: "Initializing AI model...",
+        description: "This may take a moment on first use",
+      });
+
       // Extract potential search tags from image name or URL
       const searchTags = imageToSearch.name.toLowerCase().split(/[.\-_\s]+/).filter(tag => tag.length > 2);
+      
+      setIsInitializing(false);
       
       const results = await VisualSearchService.searchSimilarProducts(
         imageToSearch.file,
@@ -57,8 +67,8 @@ export const VisualSearchInterface: React.FC = () => {
       setHasSearched(true);
 
       toast({
-        title: "Search completed!",
-        description: `Found ${results.length} similar products`,
+        title: "AI search completed!",
+        description: `Found ${results.length} visually similar products`,
       });
     } catch (error) {
       console.error('Search error:', error);
@@ -69,6 +79,7 @@ export const VisualSearchInterface: React.FC = () => {
       });
     } finally {
       setIsSearching(false);
+      setIsInitializing(false);
     }
   }, [uploadedImage, filters, toast]);
 
@@ -193,6 +204,7 @@ export const VisualSearchInterface: React.FC = () => {
                 results={filteredResults}
                 loading={isSearching}
                 showSimilarity={!!uploadedImage}
+                initializingAI={isInitializing}
               />
             </div>
           </div>

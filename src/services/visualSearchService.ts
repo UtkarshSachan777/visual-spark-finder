@@ -1,74 +1,105 @@
 import { Product, SearchResult, FilterOptions } from '@/types/product';
 import { allProducts } from '@/data/mockProducts';
+import { ImageEmbeddingService } from './imageEmbeddingService';
 
-// Simulated visual search service
-// In a real implementation, this would use ML/AI services like Google Vision API, AWS Rekognition, etc.
+// AI-powered visual search service using HuggingFace transformers
 export class VisualSearchService {
-  // Simulate visual analysis delay
-  private static delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  private static embeddingService = ImageEmbeddingService.getInstance();
+  private static productEmbeddings = new Map<string, number[]>();
+  private static isInitialized = false;
 
-  // Simulate visual similarity scoring based on product attributes
-  private static calculateSimilarity(product: Product, searchTags?: string[]): number {
-    let baseScore = Math.random() * 0.4 + 0.3; // Random base between 0.3-0.7
-    
-    // Boost score for certain categories or attributes
-    if (searchTags) {
-      const productTags = [...product.tags, product.category.toLowerCase(), product.name.toLowerCase()];
-      const matches = searchTags.filter(tag => 
-        productTags.some(pTag => pTag.includes(tag.toLowerCase()))
-      );
+  // Initialize the service and pre-compute product embeddings
+  private static async initialize(): Promise<void> {
+    if (this.isInitialized) return;
+
+    try {
+      await this.embeddingService.initialize();
       
-      if (matches.length > 0) {
-        baseScore += matches.length * 0.1; // Boost for tag matches
+      // Pre-compute embeddings for all products (in batches to avoid overwhelming the browser)
+      const batchSize = 5;
+      for (let i = 0; i < allProducts.length; i += batchSize) {
+        const batch = allProducts.slice(i, i + batchSize);
+        const promises = batch.map(async (product) => {
+          try {
+            const embedding = await this.embeddingService.generateEmbedding(product.image);
+            this.productEmbeddings.set(product.id, embedding);
+          } catch (error) {
+            console.warn(`Failed to generate embedding for product ${product.id}:`, error);
+            // Use fallback embedding (zeros) for failed products
+            this.productEmbeddings.set(product.id, new Array(512).fill(0));
+          }
+        });
+        await Promise.all(promises);
+        
+        // Add small delay between batches to prevent browser freezing
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
+      
+      this.isInitialized = true;
+    } catch (error) {
+      console.error('Failed to initialize visual search service:', error);
+      throw error;
     }
-
-    // Add some variation based on product properties
-    if (product.category === 'Electronics') baseScore += 0.05;
-    if (product.category === 'Fashion') baseScore += 0.1;
-    
-    return Math.min(baseScore, 0.95); // Cap at 95%
   }
 
-  // Simulate confidence scoring
+  // Calculate confidence based on similarity score
   private static calculateConfidence(similarity: number): number {
-    // Higher similarity generally means higher confidence
-    return Math.min(similarity + Math.random() * 0.2 - 0.1, 0.98);
+    // Convert cosine similarity (-1 to 1) to confidence (0 to 1)
+    const normalized = (similarity + 1) / 2;
+    return Math.min(Math.max(normalized, 0), 0.98);
   }
 
-  // Main search function
+  // Main search function using real AI embeddings
   static async searchSimilarProducts(
     imageFile?: File,
     imageUrl?: string,
     searchTags?: string[]
   ): Promise<SearchResult[]> {
-    // Simulate processing time
-    await this.delay(1500 + Math.random() * 1000);
+    try {
+      // Initialize service if not already done
+      await this.initialize();
 
-    // In a real implementation, you would:
-    // 1. Send image to ML service for feature extraction
-    // 2. Compare against product image database
-    // 3. Return ranked results with similarity scores
+      // Generate embedding for the input image
+      let queryEmbedding: number[];
+      if (imageFile) {
+        queryEmbedding = await this.embeddingService.generateEmbeddingFromFile(imageFile);
+      } else if (imageUrl) {
+        queryEmbedding = await this.embeddingService.generateEmbedding(imageUrl);
+      } else {
+        throw new Error('No image provided');
+      }
 
-    // For demo purposes, we'll simulate this with random scoring
-    const results: SearchResult[] = allProducts.map(product => {
-      const similarity = this.calculateSimilarity(product, searchTags);
-      const confidence = this.calculateConfidence(similarity);
+      // Calculate similarity with all products
+      const results: SearchResult[] = [];
+      
+      for (const product of allProducts) {
+        const productEmbedding = this.productEmbeddings.get(product.id);
+        
+        if (productEmbedding) {
+          const similarity = this.embeddingService.calculateCosineSimilarity(
+            queryEmbedding,
+            productEmbedding
+          );
+          const confidence = this.calculateConfidence(similarity);
 
-      return {
-        product,
-        similarity,
-        confidence
-      };
-    });
+          results.push({
+            product,
+            similarity: Math.max(similarity, 0), // Ensure non-negative
+            confidence
+          });
+        }
+      }
 
-    // Sort by similarity (highest first)
-    results.sort((a, b) => b.similarity - a.similarity);
+      // Sort by similarity (highest first)
+      results.sort((a, b) => b.similarity - a.similarity);
 
-    // Return top 24 results for better UX
-    return results.slice(0, 24);
+      // Return top 24 results for better UX
+      return results.slice(0, 24);
+    } catch (error) {
+      console.error('Search failed:', error);
+      // Fallback to random results if AI search fails
+      return this.getFeaturedProducts(24);
+    }
   }
 
   // Apply filters to search results

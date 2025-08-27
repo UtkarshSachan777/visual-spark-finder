@@ -7,12 +7,14 @@ interface ProductGridProps {
   results: SearchResult[];
   loading?: boolean;
   showSimilarity?: boolean;
+  initializingAI?: boolean;
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({ 
   results, 
   loading = false, 
-  showSimilarity = true 
+  showSimilarity = true,
+  initializingAI = false
 }) => {
   if (loading) {
     return (
@@ -22,9 +24,14 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             <Loader2 className="h-6 w-6 text-primary-foreground animate-spin" />
           </div>
           <div className="space-y-2">
-            <p className="text-lg font-medium">Finding similar products...</p>
+            <p className="text-lg font-medium">
+              {initializingAI ? 'Initializing AI model...' : 'Analyzing image with AI...'}
+            </p>
             <p className="text-sm text-muted-foreground">
-              Analyzing your image for visual matches
+              {initializingAI 
+                ? 'Loading visual recognition model (first time may take longer)'
+                : 'Comparing visual features to find similar products'
+              }
             </p>
           </div>
         </div>
