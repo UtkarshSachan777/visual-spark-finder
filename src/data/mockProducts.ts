@@ -1,4 +1,7 @@
 import { Product } from "@/types/product";
+import { allIndianProducts } from "./indianProducts";
+
+// Legacy products for backward compatibility
 import headphones1 from "@/assets/products/headphones-1.jpg";
 import phoneCase1 from "@/assets/products/phone-case-1.jpg";
 import tshirt1 from "@/assets/products/tshirt-1.jpg";
@@ -207,4 +210,4 @@ const additionalProducts: Product[] = Array.from({ length: 40 }, (_, i) => {
   };
 });
 
-export const allProducts = [...mockProducts, ...additionalProducts];
+export const allProducts = [...allIndianProducts, ...mockProducts, ...additionalProducts];
