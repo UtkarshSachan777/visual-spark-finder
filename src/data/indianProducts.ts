@@ -13,7 +13,7 @@ import miPowerbank3i from "@/assets/products/indian/mi-powerbank-3i.jpg";
 import realmeGTMaster from "@/assets/products/indian/realme-gt-master.jpg";
 import pocoX6Pro from "@/assets/products/indian/poco-x6-pro.jpg";
 import appleIphone15 from "@/assets/products/indian/apple-iphone-15.jpg";
-import asusVivobook15 from "@/assets/products/asus-vivobook-15.jpg";
+import asusVivobook15 from "@/assets/products/indian/asus-vivobook-15.jpg";
 
 // Indian Fashion
 import mensKurtaWhite from "@/assets/products/indian/mens-kurta-white.jpg";
