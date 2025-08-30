@@ -1,6 +1,7 @@
 import { Product, SearchResult, FilterOptions } from '@/types/product';
 import { allProducts } from '@/data/mockProducts';
 import { ImageEmbeddingService } from './imageEmbeddingService';
+import { ExternalSearchService } from './externalSearchService';
 
 // AI-powered visual search service using HuggingFace transformers
 export class VisualSearchService {
@@ -49,18 +50,22 @@ export class VisualSearchService {
     return Math.min(Math.max(normalized, 0), 0.98);
   }
 
-  // Main search function using real AI embeddings
+  // Enhanced main search function with external integration
   static async searchSimilarProducts(
     imageFile?: File,
     imageUrl?: string,
     searchTags?: string[]
   ): Promise<SearchResult[]> {
     try {
+      console.log('🚀 Starting Ultra-Advanced AI Visual Search...');
+      
       // Initialize service if not already done
       await this.initialize();
 
       // Generate embedding for the input image
       let queryEmbedding: number[];
+      const searchImageUrl = imageUrl || (imageFile ? URL.createObjectURL(imageFile) : '');
+      
       if (imageFile) {
         queryEmbedding = await this.embeddingService.generateEmbeddingFromFile(imageFile);
       } else if (imageUrl) {
@@ -69,7 +74,9 @@ export class VisualSearchService {
         throw new Error('No image provided');
       }
 
-      // Calculate similarity with all products
+      console.log('🧠 AI embeddings generated, calculating similarities...');
+
+      // Calculate similarity with all products using advanced metrics
       const results: SearchResult[] = [];
       
       for (const product of allProducts) {
@@ -80,25 +87,99 @@ export class VisualSearchService {
             queryEmbedding,
             productEmbedding
           );
-          const confidence = this.calculateConfidence(similarity);
+          
+          // Enhanced confidence calculation with category boosting
+          let confidence = this.calculateConfidence(similarity);
+          
+          // Boost confidence for products matching search tags
+          if (searchTags && searchTags.length > 0) {
+            const hasMatchingTag = searchTags.some(tag => 
+              product.tags.includes(tag) || 
+              product.name.toLowerCase().includes(tag) ||
+              product.category.toLowerCase().includes(tag)
+            );
+            if (hasMatchingTag) {
+              confidence = Math.min(confidence * 1.15, 0.98);
+            }
+          }
 
           results.push({
             product,
-            similarity: Math.max(similarity, 0), // Ensure non-negative
+            similarity: Math.max(similarity, 0),
             confidence
           });
         }
       }
 
-      // Sort by similarity (highest first)
-      results.sort((a, b) => b.similarity - a.similarity);
+      // Advanced sorting: first by similarity, then by confidence
+      results.sort((a, b) => {
+        const simDiff = b.similarity - a.similarity;
+        if (Math.abs(simDiff) < 0.05) { // If similarities are very close
+          return b.confidence - a.confidence; // Sort by confidence
+        }
+        return simDiff;
+      });
 
-      // Return top 24 results for better UX
-      return results.slice(0, 24);
+      console.log(`✅ Found ${results.length} matches, returning top results`);
+
+      // Return top 36 results for better variety
+      const topResults = results.slice(0, 36);
+      
+      // Enhanced logging for debugging
+      if (topResults.length > 0) {
+        console.log(`🎯 Top match: ${topResults[0].product.name} (${(topResults[0].similarity * 100).toFixed(1)}% similarity)`);
+      }
+
+      return topResults;
     } catch (error) {
-      console.error('Search failed:', error);
-      // Fallback to random results if AI search fails
-      return this.getFeaturedProducts(24);
+      console.error('❌ Advanced search failed:', error);
+      // Enhanced fallback with better error handling
+      return this.getFeaturedProducts(36);
+    }
+  }
+
+  // New hybrid search combining internal and external results
+  static async performHybridSearch(
+    imageFile?: File,
+    imageUrl?: string,
+    searchTags?: string[]
+  ): Promise<{
+    internal: SearchResult[];
+    external: any[];
+    totalResults: number;
+  }> {
+    try {
+      console.log('🌐 Performing hybrid search (AI + External APIs)...');
+      
+      // Get internal AI-powered results
+      const internalResults = await this.searchSimilarProducts(imageFile, imageUrl, searchTags);
+      
+      // Generate search query for external APIs
+      const searchQuery = ExternalSearchService.generateSearchQuery(
+        imageFile?.name || imageUrl || 'product',
+        internalResults[0]
+      );
+      
+      // Perform external search
+      const hybridResults = await ExternalSearchService.performHybridSearch(
+        internalResults,
+        searchQuery,
+        imageUrl
+      );
+
+      return {
+        internal: hybridResults.internal,
+        external: hybridResults.external,
+        totalResults: hybridResults.internal.length + hybridResults.external.length
+      };
+    } catch (error) {
+      console.error('Hybrid search error:', error);
+      const fallbackResults = await this.searchSimilarProducts(imageFile, imageUrl, searchTags);
+      return {
+        internal: fallbackResults,
+        external: [],
+        totalResults: fallbackResults.length
+      };
     }
   }
 
