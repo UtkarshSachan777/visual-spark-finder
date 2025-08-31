@@ -73,7 +73,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ result, showSimilarity
 
         <div className="flex items-center justify-between">
           <span className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
-            ${product.price.toFixed(2)}
+            ₹{product.price.toLocaleString('en-IN')}
           </span>
           {product.brand && (
             <Badge variant="outline" className="text-xs glass border-primary/30">

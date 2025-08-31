@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Search, Sparkles, TrendingUp } from 'lucide-react';
 import { ImageUpload } from './ImageUpload';
 import { ProductGrid } from './ProductGrid';
 import { FilterPanel } from './FilterPanel';
+import { LandingHero } from './LandingHero';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { UploadedImage, SearchResult, FilterOptions } from '@/types/product';
@@ -16,15 +17,25 @@ export const VisualSearchInterface: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   const [filters, setFilters] = useState<FilterOptions>({
     sortBy: 'similarity',
     sortOrder: 'desc'
   });
 
+  const uploadSectionRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const handleScrollToUpload = useCallback(() => {
+    setShowLanding(false);
+    setTimeout(() => {
+      uploadSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }, []);
 
   const handleImageUpload = useCallback((image: UploadedImage) => {
     setUploadedImage(image);
+    setShowLanding(false);
     // Auto-search when image is uploaded
     handleSearch(image);
   }, []);
@@ -119,112 +130,129 @@ export const VisualSearchInterface: React.FC = () => {
     }
   }, []);
 
-  // Load featured products on initial render
+  // Load featured products only when not on landing page
   React.useEffect(() => {
-    if (!hasSearched && searchResults.length === 0) {
+    if (!hasSearched && searchResults.length === 0 && !showLanding) {
       loadFeaturedProducts();
     }
-  }, [loadFeaturedProducts, hasSearched, searchResults.length]);
+  }, [loadFeaturedProducts, hasSearched, searchResults.length, showLanding]);
 
   const categories = VisualSearchService.getAvailableCategories();
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
-      {/* Header */}
-      <header className="glass sticky top-0 z-40 border-b border-border/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center glow animate-glow-pulse">
-                <Search className="h-6 w-6 text-primary-foreground" />
+      {/* Landing Hero Section */}
+      {showLanding && (
+        <LandingHero onScrollToUpload={handleScrollToUpload} />
+      )}
+
+      {/* Main App Interface */}
+      <div className={showLanding ? 'hidden' : 'block'}>
+        {/* Header */}
+        <header className="glass sticky top-0 z-40 border-b border-border/50">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center glow animate-glow-pulse">
+                  <Search className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                    AI Visual Search
+                  </h1>
+                  <p className="text-sm text-muted-foreground">
+                    ✨ Find products by image similarity powered by AI
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                  AI Visual Search
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  ✨ Find products by image similarity powered by AI
-                </p>
+              
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowLanding(true)}
+                  className="glass hover:bg-primary/10 transition-all duration-300"
+                >
+                  Home
+                </Button>
+                {uploadedImage && (
+                  <Button 
+                    onClick={() => handleSearch()}
+                    disabled={isSearching}
+                    className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover-lift"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    {isSearching ? 'Searching...' : 'Search Again'}
+                  </Button>
+                )}
               </div>
             </div>
-            
-            {uploadedImage && (
-              <Button 
-                onClick={() => handleSearch()}
-                disabled={isSearching}
-                className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover-lift"
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                {isSearching ? 'Searching...' : 'Search Again'}
-              </Button>
-            )}
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Upload Section */}
-          <div className="lg:col-span-4 xl:col-span-3">
-            <div className="space-y-8">
-              {/* Image Upload */}
-              <div className="max-w-2xl mx-auto">
-                <ImageUpload
-                  onImageUpload={handleImageUpload}
-                  uploadedImage={uploadedImage}
-                  onClearImage={handleClearImage}
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Upload Section */}
+            <div className="lg:col-span-4 xl:col-span-3">
+              <div className="space-y-8">
+                {/* Image Upload */}
+                <div ref={uploadSectionRef} className="max-w-2xl mx-auto">
+                  <ImageUpload
+                    onImageUpload={handleImageUpload}
+                    uploadedImage={uploadedImage}
+                    onClearImage={handleClearImage}
+                  />
+                </div>
+
+                {/* Results Header */}
+                {hasSearched && (
+                  <div className="flex items-center justify-between animate-fade-in">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                        {uploadedImage ? 'Similar Products' : 'Featured Products'}
+                      </h2>
+                      {uploadedImage && (
+                        <div className="flex items-center gap-2 text-muted-foreground animate-slide-up">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                          <span className="text-sm font-medium">
+                            {filteredResults.length} AI matches found
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="lg:hidden glass hover:bg-primary/10 transition-all duration-300"
+                    >
+                      Filters ({Object.values(filters).filter(v => v !== undefined && v !== '').length})
+                    </Button>
+                  </div>
+                )}
+
+                {/* Product Grid */}
+                <ProductGrid
+                  results={filteredResults}
+                  loading={isSearching}
+                  showSimilarity={!!uploadedImage}
+                  initializingAI={isInitializing}
                 />
               </div>
-
-              {/* Results Header */}
-              {hasSearched && (
-                <div className="flex items-center justify-between animate-fade-in">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                      {uploadedImage ? 'Similar Products' : 'Featured Products'}
-                    </h2>
-                    {uploadedImage && (
-                      <div className="flex items-center gap-2 text-muted-foreground animate-slide-up">
-                        <TrendingUp className="h-5 w-5 text-primary" />
-                        <span className="text-sm font-medium">
-                          {filteredResults.length} AI matches found
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="lg:hidden glass hover:bg-primary/10 transition-all duration-300"
-                  >
-                    Filters ({Object.values(filters).filter(v => v !== undefined && v !== '').length})
-                  </Button>
-                </div>
-              )}
-
-              {/* Product Grid */}
-              <ProductGrid
-                results={filteredResults}
-                loading={isSearching}
-                showSimilarity={!!uploadedImage}
-                initializingAI={isInitializing}
-              />
             </div>
-          </div>
 
-          {/* Filter Panel */}
-          <div className="lg:col-span-4 xl:col-span-1">
-            <div className="sticky top-24">
-              <FilterPanel
-                filters={filters}
-                onFiltersChange={handleFiltersChange}
-                onClearFilters={handleClearFilters}
-                isVisible={showFilters || window.innerWidth >= 1280}
-                onToggle={() => setShowFilters(!showFilters)}
-                categories={categories}
-                totalResults={filteredResults.length}
-              />
+            {/* Filter Panel */}
+            <div className="lg:col-span-4 xl:col-span-1">
+              <div className="sticky top-24">
+                <FilterPanel
+                  filters={filters}
+                  onFiltersChange={handleFiltersChange}
+                  onClearFilters={handleClearFilters}
+                  isVisible={showFilters || window.innerWidth >= 1280}
+                  onToggle={() => setShowFilters(!showFilters)}
+                  categories={categories}
+                  totalResults={filteredResults.length}
+                />
+              </div>
             </div>
           </div>
         </div>
