@@ -6,7 +6,7 @@ A responsive web application that allows users to upload an image (via file uplo
 
 ## 🚀 Live Demo
 
-Check out the app here: **[Insert Your Live App URL Here]**
+Check out the app here: **[(https://lovable.dev/projects/06311ec1-cd2d-4023-be71-2ca338e96ebc)]**
 
 ---
 
@@ -33,13 +33,21 @@ Check out the app here: **[Insert Your Live App URL Here]**
 ## 📂 Project Structure
 
 ├── public/ # Static assets & public files
+
 ├── src/ # Main source code
+
 │ ├── components/ # Reusable UI components
+
 │ ├── pages/ # Views and routes
+
 │ └── utils/ # Helper functions (e.g., similarity, API calls)
+
 ├── supabase/ # If using Supabase for backend/data
+
 ├── README.md # You're here
+
 ├── package.json # Project metadata & dependencies
+
 └── tailwind.config.ts
 
 
@@ -52,7 +60,7 @@ Check out the app here: **[Insert Your Live App URL Here]**
    git clone https://github.com/UtkarshSachan777/visual-product-matcher.git
    cd visual-product-matcher
 
-   📖 Technical Approach
+📖 Technical Approach
 
 The Visual Product Matcher ingests an image (either uploaded or via URL) and processes it through a pre-trained image embedding model to generate feature vectors. The same process is applied to a curated product dataset containing images and metadata. Cosine similarity between embeddings ranks visual similarity.
 
