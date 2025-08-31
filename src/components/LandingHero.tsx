@@ -2,14 +2,13 @@ import React from 'react';
 import { Search, Sparkles, TrendingUp, Zap, Eye, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-
 interface LandingHeroProps {
   onScrollToUpload: () => void;
 }
-
-export const LandingHero: React.FC<LandingHeroProps> = ({ onScrollToUpload }) => {
-  return (
-    <div className="relative min-h-screen bg-gradient-subtle overflow-hidden">
+export const LandingHero: React.FC<LandingHeroProps> = ({
+  onScrollToUpload
+}) => {
+  return <div className="relative min-h-screen bg-gradient-subtle overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
@@ -31,7 +30,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onScrollToUpload }) =>
           <h1 className="text-5xl md:text-7xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight animate-scale-in">
             Revolutionary
             <br />
-            <span className="relative">
+            <span className="relative text-violet-700">
               AI-Powered Visual Shopping
               <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-primary opacity-30"></div>
             </span>
@@ -82,11 +81,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onScrollToUpload }) =>
           {/* CTA Section */}
           <div className="mt-20 space-y-8 animate-fade-in animation-delay-700">
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                onClick={onScrollToUpload}
-                size="lg" 
-                className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover-lift text-xl px-12 py-8 rounded-2xl font-bold shadow-lg transform hover:scale-105"
-              >
+              <Button onClick={onScrollToUpload} size="lg" className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover-lift text-xl px-12 py-8 rounded-2xl font-bold shadow-lg transform hover:scale-105">
                 <Search className="h-6 w-6 mr-3" />
                 Try AI Visual Search Now
               </Button>
@@ -151,6 +146,5 @@ export const LandingHero: React.FC<LandingHeroProps> = ({ onScrollToUpload }) =>
       <div className="absolute bottom-1/4 right-10 animate-float animation-delay-3000">
         <div className="w-10 h-10 bg-yellow-400/20 rounded-full"></div>
       </div>
-    </div>
-  );
+    </div>;
 };
