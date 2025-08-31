@@ -1,10 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { Search, Sparkles, TrendingUp, Globe, Zap } from 'lucide-react';
+import { Search, Sparkles, TrendingUp } from 'lucide-react';
 import { ImageUpload } from './ImageUpload';
 import { ProductGrid } from './ProductGrid';
 import { FilterPanel } from './FilterPanel';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { UploadedImage, SearchResult, FilterOptions } from '@/types/product';
 import { VisualSearchService } from '@/services/visualSearchService';
@@ -17,7 +16,6 @@ export const VisualSearchInterface: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [searchStats, setSearchStats] = useState({ totalProducts: 0, processingTime: 0 });
   const [filters, setFilters] = useState<FilterOptions>({
     sortBy: 'similarity',
     sortOrder: 'desc'
@@ -47,12 +45,10 @@ export const VisualSearchInterface: React.FC = () => {
     setHasSearched(false);
 
     try {
-      const startTime = Date.now();
-      
-      // Enhanced loading message
+      // Show initialization message on first search
       toast({
-        title: "🚀 Ultra-Advanced AI Search Starting...",
-        description: "Preparing high-precision neural networks",
+        title: "Initializing AI model...",
+        description: "This may take a moment on first use",
       });
 
       // Extract potential search tags from image name or URL
@@ -60,24 +56,19 @@ export const VisualSearchInterface: React.FC = () => {
       
       setIsInitializing(false);
       
-      // Use enhanced search with better accuracy
       const results = await VisualSearchService.searchSimilarProducts(
         imageToSearch.file,
         imageToSearch.url,
         searchTags
       );
       
-      const processingTime = Date.now() - startTime;
-      
       setSearchResults(results);
       setFilteredResults(VisualSearchService.filterResults(results, filters));
-      setSearchStats({ totalProducts: results.length, processingTime });
       setHasSearched(true);
 
-      // Enhanced success message
       toast({
-        title: "🎯 AI Analysis Complete!",
-        description: `Found ${results.length} matches in ${(processingTime / 1000).toFixed(1)}s with ${results.length > 0 ? (results[0].similarity * 100).toFixed(1) + '% top accuracy' : 'high precision'}`,
+        title: "AI search completed!",
+        description: `Found ${results.length} visually similar products`,
       });
     } catch (error) {
       console.error('Search error:', error);
@@ -148,37 +139,25 @@ export const VisualSearchInterface: React.FC = () => {
                 <Search className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                  Ultra-Advanced AI Visual Search
+                <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                  AI Visual Search
                 </h1>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Zap className="h-4 w-4 text-primary" />
-                  <span>Industry-leading accuracy • 100+ Premium Products</span>
-                  <Badge variant="secondary" className="ml-2 text-xs bg-primary/10">
-                    PROFESSIONAL
-                  </Badge>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  ✨ Find products by image similarity powered by AI
+                </p>
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
-              {hasSearched && searchStats.totalProducts > 0 && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Globe className="h-4 w-4 text-primary" />
-                  <span>{searchStats.totalProducts} results in {(searchStats.processingTime / 1000).toFixed(1)}s</span>
-                </div>
-              )}
-              {uploadedImage && (
-                <Button 
-                  onClick={() => handleSearch()}
-                  disabled={isSearching}
-                  className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover-lift"
-                >
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  {isSearching ? 'Analyzing...' : 'Search Again'}
-                </Button>
-              )}
-            </div>
+            {uploadedImage && (
+              <Button 
+                onClick={() => handleSearch()}
+                disabled={isSearching}
+                className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover-lift"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                {isSearching ? 'Searching...' : 'Search Again'}
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -202,19 +181,14 @@ export const VisualSearchInterface: React.FC = () => {
                 <div className="flex items-center justify-between animate-fade-in">
                   <div className="flex items-center gap-3">
                     <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                      {uploadedImage ? 'AI-Powered Similar Products' : 'Premium Featured Collection'}
+                      {uploadedImage ? 'Similar Products' : 'Featured Products'}
                     </h2>
-                    {uploadedImage && filteredResults.length > 0 && (
-                      <div className="flex items-center gap-4 text-muted-foreground animate-slide-up">
-                        <div className="flex items-center gap-2">
-                          <TrendingUp className="h-5 w-5 text-primary" />
-                          <span className="text-sm font-medium">
-                            {filteredResults.length} AI matches
-                          </span>
-                        </div>
-                        <Badge variant="outline" className="text-xs bg-primary/5">
-                          Top Match: {(filteredResults[0]?.similarity * 100 || 0).toFixed(1)}% accuracy
-                        </Badge>
+                    {uploadedImage && (
+                      <div className="flex items-center gap-2 text-muted-foreground animate-slide-up">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        <span className="text-sm font-medium">
+                          {filteredResults.length} AI matches found
+                        </span>
                       </div>
                     )}
                   </div>
