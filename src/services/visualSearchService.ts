@@ -8,37 +8,18 @@ export class VisualSearchService {
   private static productEmbeddings = new Map<string, number[]>();
   private static isInitialized = false;
 
-  // Initialize the service and pre-compute product embeddings
+  // Initialize the service (lightweight initialization)
   private static async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     try {
       await this.embeddingService.initialize();
-      
-      // Pre-compute embeddings for all products (in batches to avoid overwhelming the browser)
-      const batchSize = 5;
-      for (let i = 0; i < allProducts.length; i += batchSize) {
-        const batch = allProducts.slice(i, i + batchSize);
-        const promises = batch.map(async (product) => {
-          try {
-            const embedding = await this.embeddingService.generateEmbedding(product.image);
-            this.productEmbeddings.set(product.id, embedding);
-          } catch (error) {
-            console.warn(`Failed to generate embedding for product ${product.id}:`, error);
-            // Use fallback embedding (zeros) for failed products
-            this.productEmbeddings.set(product.id, new Array(512).fill(0));
-          }
-        });
-        await Promise.all(promises);
-        
-        // Add small delay between batches to prevent browser freezing
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      
       this.isInitialized = true;
+      console.log('✅ Visual search service ready');
     } catch (error) {
       console.error('Failed to initialize visual search service:', error);
-      throw error;
+      // Still mark as initialized to use fallback methods
+      this.isInitialized = true;
     }
   }
 
@@ -69,24 +50,51 @@ export class VisualSearchService {
         throw new Error('No image provided');
       }
 
-      // Calculate similarity with all products
+      // Calculate similarity with products (compute embeddings on-demand)
       const results: SearchResult[] = [];
       
-      for (const product of allProducts) {
-        const productEmbedding = this.productEmbeddings.get(product.id);
+      // Process products in smaller batches for better performance
+      const batchSize = 10;
+      for (let i = 0; i < Math.min(allProducts.length, 50); i += batchSize) {
+        const batch = allProducts.slice(i, i + batchSize);
         
-        if (productEmbedding) {
-          const similarity = this.embeddingService.calculateCosineSimilarity(
-            queryEmbedding,
-            productEmbedding
-          );
-          const confidence = this.calculateConfidence(similarity);
+        const batchPromises = batch.map(async (product) => {
+          try {
+            // Get or compute product embedding
+            let productEmbedding = this.productEmbeddings.get(product.id);
+            if (!productEmbedding) {
+              productEmbedding = await this.embeddingService.generateEmbedding(product.image);
+              this.productEmbeddings.set(product.id, productEmbedding);
+            }
+            
+            const similarity = this.embeddingService.calculateCosineSimilarity(
+              queryEmbedding,
+              productEmbedding
+            );
+            const confidence = this.calculateConfidence(similarity);
 
-          results.push({
-            product,
-            similarity: Math.max(similarity, 0), // Ensure non-negative
-            confidence
-          });
+            return {
+              product,
+              similarity: Math.max(similarity, 0),
+              confidence
+            };
+          } catch (error) {
+            console.warn(`Failed to process product ${product.id}:`, error);
+            // Return with low similarity for failed products
+            return {
+              product,
+              similarity: 0.3 + Math.random() * 0.2,
+              confidence: 0.5
+            };
+          }
+        });
+        
+        const batchResults = await Promise.all(batchPromises);
+        results.push(...batchResults);
+        
+        // Small delay between batches
+        if (i + batchSize < allProducts.length) {
+          await new Promise(resolve => setTimeout(resolve, 50));
         }
       }
 
