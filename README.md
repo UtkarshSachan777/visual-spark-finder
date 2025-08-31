@@ -1,73 +1,61 @@
-# Welcome to your Lovable project
+# Visual Product Matcher
 
-## Project info
+A responsive web application that allows users to upload an image (via file upload or URL) and receive a curated list of visually similar products.
 
-**URL**: https://lovable.dev/projects/06311ec1-cd2d-4023-be71-2ca338e96ebc
+---
 
-## How can I edit this code?
+## 🚀 Live Demo
 
-There are several ways of editing your application.
+Check out the app here: **[Insert Your Live App URL Here]**
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/06311ec1-cd2d-4023-be71-2ca338e96ebc) and start prompting.
+## ✨ Features
 
-Changes made via Lovable will be committed automatically to this repo.
+- Upload an image via file upload or provide a URL.  
+- View the uploaded image directly on the interface.  
+- Display visually similar products from a dataset of 50+ items.  
+- Filter results based on similarity score.  
+- Responsive design for seamless use on both desktop and mobile devices.  
+- Smooth UX with loading states and error handling.  
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠 Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Frontend**: React (with Vite) & TypeScript  
+- **UI**: Tailwind CSS + shadcn-ui components  
+- **Image Processing**: Pre-trained model (e.g., CLIP / ResNet) for embeddings + cosine similarity ranking  
+- **Hosting**: Deployed on a free hosting platform (e.g., Vercel / Netlify / Render)  
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 📂 Project Structure
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+├── public/ # Static assets & public files
+├── src/ # Main source code
+│ ├── components/ # Reusable UI components
+│ ├── pages/ # Views and routes
+│ └── utils/ # Helper functions (e.g., similarity, API calls)
+├── supabase/ # If using Supabase for backend/data
+├── README.md # You're here
+├── package.json # Project metadata & dependencies
+└── tailwind.config.ts
 
-# Step 3: Install the necessary dependencies.
-npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## ⚙️ Local Setup & Development
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/UtkarshSachan777/visual-product-matcher.git
+   cd visual-product-matcher
 
-**Use GitHub Codespaces**
+   📖 Technical Approach
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The Visual Product Matcher ingests an image (either uploaded or via URL) and processes it through a pre-trained image embedding model to generate feature vectors. The same process is applied to a curated product dataset containing images and metadata. Cosine similarity between embeddings ranks visual similarity.
 
-## What technologies are used for this project?
+The frontend, built with React, Vite, TypeScript, and styled using Tailwind CSS and shadcn-ui, allows users to view their uploaded image, browse similar products, and filter by similarity. Loading states and basic error handling ensure smooth UX, and the design is fully responsive for mobile devices.
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/06311ec1-cd2d-4023-be71-2ca338e96ebc) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+The application is deployed on a free hosting platform for accessibility. The codebase is modular and maintainable, with clear separation between UI, logic, and API layers. Inline comments and documentation explain the methodology and setup steps.
